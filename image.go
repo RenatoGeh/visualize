@@ -94,11 +94,13 @@ func colorize(M gocv.Mat, ch int) gocv.Mat {
 
 // Saves an spn.VarSet to filename.
 func SaveInstance(I map[int]int, filename string) {
+	c := 255.0 / float32(Max)
 	M := gocv.NewMatWithSize(Width, Height, gocv.MatTypeCV8U)
 	for k, v := range I {
 		x := k % Width
 		y := k / Width
-		M.SetUCharAt(x, y, uint8(v))
+		p := float32(v) * c
+		M.SetUCharAt(y, x, uint8(p))
 	}
 	gocv.IMWrite(filename, M)
 }

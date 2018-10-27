@@ -6,6 +6,8 @@ import (
 	"github.com/RenatoGeh/gospn/data"
 	"github.com/RenatoGeh/gospn/io"
 	"github.com/RenatoGeh/gospn/spn"
+	"github.com/RenatoGeh/gospn/sys"
+	"math"
 )
 
 func subtract(U spn.VarSet, V spn.VarSet) {
@@ -20,19 +22,31 @@ func CompleteHalf(S spn.SPN, I spn.VarSet, l, i int) {
 	st := spn.NewStorer()
 	tk := st.NewTicket()
 	H := make(map[io.CmplType]spn.VarSet)
+	SaveInstance(I, fmt.Sprintf("full_%d_%d.png", i, l))
 	H[io.Left], H[io.Right] = io.SplitHalf(I, io.Left, Width, Height)
 	H[io.Top], H[io.Bottom] = io.SplitHalf(I, io.Top, Width, Height)
+	n := Width * Height
 	for t, h := range H {
-		_, _, M := spn.StoreMAP(S, h, tk, st)
-		subtract(M, h)
-		delete(M, ClassVar.Varid)
-		st.Reset(tk)
-		s := fmt.Sprintf("cmpl_%s_%d_%d.pgm", t, i, l)
-		SaveInstance(M, s)
+		//_, _, M := spn.StoreMAP(S, h, tk, st)
+		for p := 0; p < n; p++ {
+			pm, vmax := math.Inf(-1), -1
+			for v := 0; v < sys.Max; v++ {
+				h[p] = v
+				spn.StoreInference(S, h, tk, st)
+				pi, _ := st.Single(tk, S)
+				if pi > pm {
+					pm, vmax = pi, v
+				}
+				st.Reset(tk)
+			}
+			h[p] = vmax
+		}
+		s := fmt.Sprintf("cmpl_%s_%d_%d.png", t, i, l)
+		SaveInstance(h, s)
 	}
 }
 
-func CompleteData(S spn.SPN, D spn.Dataset, L []int) {
+func CompleteData(S []spn.SPN, D spn.Dataset, L []int) {
 	Q := conc.NewSingleQueue(-1)
 	G, H := data.Divide(D, L, Q.Allowed())
 	k := len(G)
@@ -40,7 +54,8 @@ func CompleteData(S spn.SPN, D spn.Dataset, L []int) {
 		Q.Run(func(id int) {
 			g, h := G[id], H[id]
 			for j := range g {
-				CompleteHalf(S, g[j], h[j], k*id+j)
+				l := h[j]
+				CompleteHalf(S[l], g[j], l, k*id+j)
 			}
 		}, i)
 	}

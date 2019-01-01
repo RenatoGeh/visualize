@@ -57,18 +57,28 @@ func ImagesToData(dir string, n, m, w, h, max int) ([]map[int]int, []int, []map[
 		if err != nil {
 			panic(err)
 		}
+		nf := len(files)
 		for j, f := range files {
 			fpath := cpath + "/" + f.Name()
-			if j < n {
+			if n < 0 || nf < n {
 				I := ImageToInstance(fpath, w, h, max)
-				D = append(D, I)
-				L = append(L, i)
-			} else if j < n+m {
-				I := ImageToInstance(fpath, w, h, max)
-				E = append(E, I)
-				J = append(J, i)
+				if j > nf-m {
+					E, J = append(E, I), append(J, i)
+				} else {
+					D, L = append(D, I), append(L, i)
+				}
 			} else {
-				break
+				if j < n {
+					I := ImageToInstance(fpath, w, h, max)
+					D = append(D, I)
+					L = append(L, i)
+				} else if j < n+m {
+					I := ImageToInstance(fpath, w, h, max)
+					E = append(E, I)
+					J = append(J, i)
+				} else {
+					break
+				}
 			}
 		}
 	}

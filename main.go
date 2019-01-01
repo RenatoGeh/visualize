@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/RenatoGeh/gospn/conc"
+	"github.com/RenatoGeh/gospn/data"
 	"github.com/RenatoGeh/gospn/spn"
 	"log"
 	"os"
@@ -15,7 +17,7 @@ func main() {
 	}
 
 	var S []spn.SPN
-	R, L, T, J, Sc, _ := ImagesToData("data/caltech_simple", 35, 5, 200, 200, 255)
+	R, L, T, J, Sc, _ := ImagesToData("data/caltech_pruned", -1, 5, 100, 100, 7)
 	if nargs == 2 {
 		fmt.Println("Loading SPNs...")
 		var err error
@@ -36,7 +38,19 @@ func main() {
 		fmt.Println("Saving model...")
 		Save(S, os.Args[2])
 	}
-	fmt.Println("Performing completion...")
-	CompleteData(S, T, J)
+	if nargs == 4 && os.Args[3] == "cmpl" {
+		fmt.Println("Performing completion...")
+		CompleteData(S, T, J)
+	} else {
+		fmt.Println("Coloring scope...")
+		R := data.Split(T, ClassVar.Categories, J)
+		Q := conc.NewSingleQueue(-1)
+		for i, s := range S {
+			Q.Run(func(id int) {
+				ColorScope(s, os.Args[1], id, R[id])
+			}, i)
+		}
+		Q.Wait()
+	}
 	fmt.Println("Done.")
 }

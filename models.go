@@ -24,7 +24,7 @@ func Gens(D spn.Dataset, L []int, Sc map[int]*learn.Variable) []spn.SPN {
 					nSc[k] = v
 				}
 			}
-			S[id] = gens.Learn(nSc, T[id], 2, 0.01, 4.0, 4.0)
+			S[id] = gens.Learn(nSc, T[id], 2, 0.001, 4.0, 4.0)
 			fmt.Printf("  Finished learning category %d.\n", id)
 		}, i)
 	}

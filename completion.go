@@ -6,8 +6,7 @@ import (
 	"github.com/RenatoGeh/gospn/data"
 	"github.com/RenatoGeh/gospn/io"
 	"github.com/RenatoGeh/gospn/spn"
-	"github.com/RenatoGeh/gospn/sys"
-	"math"
+	//"math"
 )
 
 func subtract(U spn.VarSet, V spn.VarSet) {
@@ -25,24 +24,27 @@ func CompleteHalf(S spn.SPN, I spn.VarSet, l, i int) {
 	SaveInstance(I, fmt.Sprintf("full_%d_%d.png", i, l))
 	H[io.Left], H[io.Right] = io.SplitHalf(I, io.Left, Width, Height)
 	H[io.Top], H[io.Bottom] = io.SplitHalf(I, io.Top, Width, Height)
-	n := Width * Height
+	fmt.Printf("Left: %d, Right: %d, Top: %d, Bottom: %d, Full: %d, W: %d, H: %d\n", len(H[io.Left]),
+		len(H[io.Right]), len(H[io.Top]), len(H[io.Bottom]), len(I), Width, Height)
+	//n := Width * Height
 	for t, h := range H {
-		//_, _, M := spn.StoreMAP(S, h, tk, st)
-		for p := 0; p < n; p++ {
-			pm, vmax := math.Inf(-1), -1
-			for v := 0; v < sys.Max; v++ {
-				h[p] = v
-				spn.StoreInference(S, h, tk, st)
-				pi, _ := st.Single(tk, S)
-				if pi > pm {
-					pm, vmax = pi, v
-				}
-				st.Reset(tk)
-			}
-			h[p] = vmax
-		}
+		_, _, M := spn.StoreMAP(S, h, tk, st)
+		st.Reset(tk)
+		//for p := 0; p < n; p++ {
+		//if _, e := h[p]; e {
+		//continue
+		//}
+		//pm, vmax := math.Inf(-1), -1
+		//for v := 0; v < Max+1; v++ {
+		//pi := spn.InferenceY(S, h, p, v)
+		//if pi > pm {
+		//pm, vmax = pi, v
+		//}
+		//}
+		//h[p] = vmax
+		//}
 		s := fmt.Sprintf("cmpl_%s_%d_%d.png", t, i, l)
-		SaveInstance(h, s)
+		SaveInstance(M, s)
 	}
 }
 

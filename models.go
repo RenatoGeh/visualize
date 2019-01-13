@@ -46,7 +46,7 @@ func Dennis(D spn.Dataset, L []int, Sc map[int]*learn.Variable) []spn.SPN {
 					nSc[k] = v
 				}
 			}
-			S[id] = dennis.Structure(T[id], nSc, 1, 4, 4, 0.95)
+			S[id] = dennis.Structure(T[id], nSc, 1, 4, 4, 0.85)
 			fmt.Printf("  Finished learning category %d.\n", id)
 		}, i)
 	}

@@ -9,6 +9,8 @@ import (
 	"os"
 )
 
+const ScopeThreshold = 50
+
 func colorify(path string, Sc [][]int, C []colorful.Color, V spn.VarSet, idx int) {
 	I := image.NewRGBA(image.Rect(0, 0, Width, Height))
 	for x := 0; x < Width; x++ {
@@ -59,15 +61,21 @@ func ColorScope(S spn.SPN, mdl string, is int, T []map[int]int) {
 			fmt.Println(err)
 			fmt.Printf("Length: %d\n", len(C))
 		}
+		var m int
 		var Sc [][]int
 		for _, c := range ch {
-			Sc = append(Sc, c.Sc())
+			csc := c.Sc()
+			Sc = append(Sc, csc)
+			m += len(csc)
+		}
+		if m < ScopeThreshold {
+			return true
 		}
 		if t := Z.Type(); t == "sum" {
 			//colorify(spath, Sc, C, T[0], sums)
 			sums++
 		} else if t == "product" {
-			colorify(ppath, Sc, C, T[0], prods)
+			colorify(ppath, Sc, C, MeanImage(T), prods)
 			prods++
 		}
 		return true

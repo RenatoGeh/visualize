@@ -17,7 +17,8 @@ func main() {
 	}
 
 	var S []spn.SPN
-	R, L, T, J, Sc, _ := ImagesToData("data/caltech_pruned", -1, 5, 100, 100, 7)
+	//R, L, T, J, Sc, _ := ImagesToData("data/caltech_pruned", -1, 5, 100, 100, 255)
+	R, L, T, J, Sc, _ := ImagesToData("data/english_small", -1, 5, 100, 100, 255)
 	if nargs == 2 {
 		fmt.Println("Loading SPNs...")
 		var err error
@@ -45,9 +46,9 @@ func main() {
 		fmt.Println("Coloring scope...")
 		R := data.Split(T, ClassVar.Categories, J)
 		Q := conc.NewSingleQueue(-1)
-		for i, s := range S {
+		for i := range S {
 			Q.Run(func(id int) {
-				ColorScope(s, os.Args[1], id, R[id])
+				ColorScope(S[id], os.Args[1], id, R[id])
 			}, i)
 		}
 		Q.Wait()

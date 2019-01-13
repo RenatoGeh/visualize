@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/RenatoGeh/gospn/learn"
+	"github.com/RenatoGeh/gospn/spn"
 	"github.com/RenatoGeh/gospn/sys"
 	"gocv.io/x/gocv"
 	"image"
@@ -58,6 +59,7 @@ func ImagesToData(dir string, n, m, w, h, max int) ([]map[int]int, []int, []map[
 			panic(err)
 		}
 		nf := len(files)
+		fmt.Printf("Reading class '%s'\n", c.Name())
 		for j, f := range files {
 			fpath := cpath + "/" + f.Name()
 			if n < 0 || nf < n {
@@ -113,4 +115,35 @@ func SaveInstance(I map[int]int, filename string) {
 		M.SetUCharAt(y, x, uint8(p))
 	}
 	gocv.IMWrite(filename, M)
+}
+
+func MeanImage(D spn.Dataset) spn.VarSet {
+	I := make(spn.VarSet)
+	for _, J := range D {
+		for p, v := range J {
+			I[p] += v
+		}
+	}
+	n := len(D)
+	for i := range I {
+		I[i] /= n
+	}
+	return I
+}
+
+func DataToImages(pre string, D spn.Dataset, L []int) {
+	for i, X := range D {
+		l := L[i]
+		path := fmt.Sprintf("%s/%d", pre, l)
+		os.MkdirAll(path, 0700)
+		SaveInstance(X, fmt.Sprintf("%s/%d.png", path, i))
+	}
+}
+
+func DataToImagesSL(pre string, D spn.Dataset, l int) {
+	for i, X := range D {
+		path := fmt.Sprintf("%s/%d", pre, l)
+		os.MkdirAll(path, 0700)
+		SaveInstance(X, fmt.Sprintf("%s/%d.png", path, i))
+	}
 }

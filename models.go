@@ -46,8 +46,11 @@ func Dennis(D spn.Dataset, L []int, Sc map[int]*learn.Variable) []spn.SPN {
 					nSc[k] = v
 				}
 			}
-			S[id] = dennis.Structure(T[id], nSc, 1, 4, 4, 0.85)
+			fmt.Printf("|T|: %d, |T[0]|: %d, |nSc|: %d\n", len(T[id]), len(T[id][0]), len(nSc))
+			S[id] = dennis.Structure(T[id], nSc, 5, 4, 4, 0.85)
 			fmt.Printf("  Finished learning category %d.\n", id)
+			_s, _p, _l := spn.CountNodes(S[id])
+			fmt.Printf("Sums: %d, Products: %d, Leaves: %d, Total: %d\n", _s, _p, _l, _s+_p+_l)
 		}, i)
 	}
 	Q.Wait()

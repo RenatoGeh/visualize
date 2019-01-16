@@ -11,22 +11,19 @@ import (
 
 func main() {
 	nargs := len(os.Args)
-	if nargs < 2 || nargs > 3 {
+	if nargs < 2 || nargs > 4 {
 		fmt.Printf("Usage: %s [model filename] | [filename]\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	var S []spn.SPN
-	//R, L, T, J, Sc, _ := ImagesToData("data/caltech_pruned", -1, 5, 100, 100, 255)
-	R, L, T, J, Sc, _ := ImagesToData("data/english_small", -1, 5, 100, 100, 255)
+	R, L, T, J, Sc, _ := ImagesToData("data/caltech_simple", -1, 39, 100, 100, 255)
+	//R, L, T, J, Sc, _ := ImagesToData("data/english_small", -1, 5, 100, 100, 255)
+	fmt.Printf("|R|: %d, |L|: %d, |T|: %d, |J|: %d, |Sc|: %d\n", len(R), len(L), len(T), len(J), len(Sc))
 	if nargs == 2 {
 		fmt.Println("Loading SPNs...")
-		var err error
 		S = Load(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-	} else {
+	} else if nargs == 3 {
 		fmt.Println("Extracting images...")
 		fmt.Println("Learning...")
 		if os.Args[1] == "gens" {
@@ -40,6 +37,9 @@ func main() {
 		Save(S, os.Args[2])
 	}
 	if nargs == 4 && os.Args[3] == "cmpl" {
+		if S == nil {
+			S = Load(os.Args[1])
+		}
 		fmt.Println("Performing completion...")
 		CompleteData(S, T, J)
 	} else {

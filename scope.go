@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-const ScopeThreshold = 50
+const ScopeThreshold = 200
 
 func colorify(path string, Sc [][]int, C []colorful.Color, V spn.VarSet, idx int) {
 	I := image.NewRGBA(image.Rect(0, 0, Width, Height))
@@ -49,7 +49,7 @@ func ColorScope(S spn.SPN, mdl string, is int, T []map[int]int) {
 	fmt.Println("Computing scope...")
 	spn.ComputeScope(S)
 	var sums, prods int
-	spn.BreadthFirst(S, func(Z spn.SPN) bool {
+	spn.BreadthFirst(S, func(Z spn.SPN) int {
 		ch := Z.Ch()
 		n := len(ch)
 		C, err := colorful.SoftPaletteEx(n, colorful.SoftPaletteSettings{
@@ -69,7 +69,7 @@ func ColorScope(S spn.SPN, mdl string, is int, T []map[int]int) {
 			m += len(csc)
 		}
 		if m < ScopeThreshold {
-			return true
+			return -1
 		}
 		if t := Z.Type(); t == "sum" {
 			//colorify(spath, Sc, C, T[0], sums)
@@ -78,7 +78,7 @@ func ColorScope(S spn.SPN, mdl string, is int, T []map[int]int) {
 			colorify(ppath, Sc, C, MeanImage(T), prods)
 			prods++
 		}
-		return true
+		return 0
 	})
 	fmt.Println(prods)
 }

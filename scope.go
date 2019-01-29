@@ -101,15 +101,15 @@ func completify(path string, S spn.SPN, idx int) {
 			x, y := p%Width, p/Width
 			// Order: Blue, Green, Red
 			u := float64(v) / float64(Max)
-			if LearnType == "gens" {
-				I.Set(x, y, colorful.Color{
-					float64((((i + 1) >> 1) ^ 1)) * u,
-					float64((i & 1)) * u,
-					float64(((i & 2) >> 1)) * u,
-				})
-			} else {
-				I.Set(x, y, colorful.Color{u, u, u})
-			}
+			//if LearnType == "gens" {
+			//I.Set(x, y, colorful.Color{
+			//float64(((i & 2) >> 1)) * u,
+			//float64((i & 1)) * u,
+			//float64((((i + 1) >> 1) ^ 1)) * u,
+			//})
+			//} else {
+			I.Set(x, y, colorful.Color{u, u, u})
+			//}
 		}
 		var filename string
 		if LearnType == "gens" {

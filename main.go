@@ -17,7 +17,8 @@ func main() {
 	}
 
 	var S []spn.SPN
-	R, L, T, J, Sc, _ := ImagesToData("data/caltech_simple", -1, 5, 100, 100, 7)
+	//R, L, T, J, Sc, _ := ImagesToData("data/caltech_simple", -1, 0, 100, 100, 7)
+	R, L, T, J, Sc, _ := ImagesToData("data/olivetti_simple", -1, 0, 46, 56, 7)
 	//R, L, T, J, Sc, _ := ImagesToData("data/english_small", -1, 5, 100, 100, 255)
 	fmt.Printf("|R|: %d, |L|: %d, |T|: %d, |J|: %d, |Sc|: %d\n", len(R), len(L), len(T), len(J), len(Sc))
 	LearnType = os.Args[2]
@@ -48,7 +49,7 @@ func main() {
 		CompleteData(S, T, J)
 	} else {
 		fmt.Println("Coloring scope...")
-		R := data.Split(T, ClassVar.Categories, J)
+		R := data.Split(R, ClassVar.Categories, L)
 		Q := conc.NewSingleQueue(-1)
 		for i := range S {
 			Q.Run(func(id int) {
